@@ -20,3 +20,15 @@
    ..."
   [s]
   (.markdown mdp s))
+
+(defn fnord-int
+  "Mongo or congomongo seem to sometimes return floats.
+
+  And then sometimes the revision is just not set.
+  "
+  [x]
+  (if (integer? x)
+    x
+    (if (nil? x)
+      0
+      (int x))))

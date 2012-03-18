@@ -1,7 +1,8 @@
 ;; models. for pages. yes.
 
 (ns eradi.models.pages
-  (:require [somnium.congomongo :as mongo])
+  (:require [somnium.congomongo :as mongo]
+            [eradi.tools :as tools])
   (:use eradi.models.base))
 
 ;; return a test page
@@ -42,9 +43,7 @@
         {:author author,
          :name name,
          :body body,
-         :revision (+ 1 (if (nil? revision)
-                          0
-                          (Integer/parseInt revision)))}))))
+         :revision (+ 1 (tools/fnord-int revision))}))))
 
 ;; update an existing page
 (defn update

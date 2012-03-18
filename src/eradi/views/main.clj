@@ -13,7 +13,7 @@
 (defpage "/" []
   (common/wikipage
     "Welcome to eradi"
-    [:div.content "a simple wiki"]))
+    "a simple wiki"))
 
 ;; POST target of page adding
 (defpage [:post "/add"] {:as page}
@@ -28,10 +28,11 @@
 (defpage "/add" {:as page}
   (common/wikipage
     "Add a page"
-    [:div.content
-     (form-to [:post "/add"]
-              (common/page-fields page)
-              (submit-button "Add page"))]))
+    (form-to {:class "form-horizontal"} [:post "/add"]
+             (common/page-fields page)
+             [:div.control-group
+              [:div.controls
+               (submit-button {:class "btn btn-primary"} "Add page")]])))
 
 ;; POST target of page editing
 (defpage [:post "/edit/:pgname"] {:keys [pgname] :as post}
@@ -44,10 +45,11 @@
   (if-let [post (pages/get-one pgname)]
     (common/wikipage
       (html "Edit page: " (link-to (str "/page/" pgname) pgname))
-      [:div.content
-       (form-to [:post (str "/edit/" pgname)]
-                (common/page-fields post)
-                (submit-button "Edit page"))])))
+      (form-to {:class "form-horizontal"} [:post (str "/edit/" pgname)]
+               (common/page-fields post)
+               [:div.control-group
+                [:div.controls
+                 (submit-button {:class "btn btn-primary"} "Edit page")]]))))
 
 ;; display a page
 (defpage "/page/:pgname" {:keys [pgname]}

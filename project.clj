@@ -1,5 +1,5 @@
 (defproject eradi "0.1.0-SNAPSHOT"
-            :description "A simple wiki"
+            :description "A simple wiki with Markdown."
             :dependencies [[org.clojure/clojure "1.2.1"]
                            [noir "1.2.2"]
                            [congomongo "0.1.8"]

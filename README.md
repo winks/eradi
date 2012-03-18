@@ -1,6 +1,9 @@
 # eradi
 
-A simple wikie written in noir. 
+A simple wiki with Markdown.
+
+Written in [Clojure](http://clojure.org) + 
+[noir](http://webnoir.org) + [MongoDB](http://mongodb.org). 
 
 ## Usage
 
@@ -14,4 +17,3 @@ lein run
 Copyright (C) 2012 Florian Anderiasch
 
 Distributed under the Eclipse Public License, the same as Clojure.
-

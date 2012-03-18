@@ -3029,7 +3029,7 @@ net.brehaut.ClojureTools = (function (SH) {
   };
 })(SyntaxHighlighter);
 </script><title>eradi -- Marginalia</title></head><body><table><tr><td class="docs"><div class="header"><h1 class="project-name">eradi</h1><h2 class="project-version">0.1.0-SNAPSHOT</h2><br /><p>A simple wiki</p>
-</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.2.1</td></tr><tr><td class="dep-name">noir</td><td class="dotted"><hr /></td><td class="dep-version">1.2.2</td></tr><tr><td class="dep-name">congomongo</td><td class="dotted"><hr /></td><td class="dep-version">0.1.8</td></tr><tr><td class="dep-name">org.markdownj/markdownj</td><td class="dotted"><hr /></td><td class="dep-version">0.3.0-1.0.2b4</td></tr></table></div><div class="dependencies"><h3>dev dependencies</h3><table><tr><td class="dep-name">lein-marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.7.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#eradi.models.base">eradi.models.base</a></li><li><a href="#eradi.models.pages">eradi.models.pages</a></li><li><a href="#eradi.server">eradi.server</a></li><li><a href="#"></a></li><li><a href="#eradi.views.common">eradi.views.common</a></li><li><a href="#eradi.views.main">eradi.views.main</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#eradi.models.base" name="eradi.models.base"><h1 class="project-name">eradi.models.base</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>rudimentary mongodb connectivity</p>
+</div><div class="dependencies"><h3>dependencies</h3><table><tr><td class="dep-name">org.clojure/clojure</td><td class="dotted"><hr /></td><td class="dep-version">1.2.1</td></tr><tr><td class="dep-name">noir</td><td class="dotted"><hr /></td><td class="dep-version">1.2.2</td></tr><tr><td class="dep-name">congomongo</td><td class="dotted"><hr /></td><td class="dep-version">0.1.8</td></tr><tr><td class="dep-name">org.markdownj/markdownj</td><td class="dotted"><hr /></td><td class="dep-version">0.3.0-1.0.2b4</td></tr></table></div><div class="dependencies"><h3>dev dependencies</h3><table><tr><td class="dep-name">lein-marginalia</td><td class="dotted"><hr /></td><td class="dep-version">0.7.0</td></tr></table></div></td><td class="codes" style="text-align: center; vertical-align: middle;color: #666;padding-right:20px"><br /><br /><br />(this space intentionally left almost blank)</td></tr><tr><td class="docs"><div class="toc"><a name="toc"><h3>namespaces</h3></a><ul><li><a href="#eradi.models.base">eradi.models.base</a></li><li><a href="#eradi.models.pages">eradi.models.pages</a></li><li><a href="#eradi.server">eradi.server</a></li><li><a href="#eradi.tools">eradi.tools</a></li><li><a href="#eradi.views.common">eradi.views.common</a></li><li><a href="#eradi.views.main">eradi.views.main</a></li></ul></div></td><td class="codes">&nbsp;</td></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#eradi.models.base" name="eradi.models.base"><h1 class="project-name">eradi.models.base</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>rudimentary mongodb connectivity</p>
 </td><td class="codes"></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns eradi.models.base
   (:require [somnium.congomongo :as mongo]))</pre></td></tr><tr><td class="docs"><p>connect to a local mongodb instance</p>
@@ -3048,8 +3048,10 @@ net.brehaut.ClojureTools = (function (SH) {
 </td><td class="codes"><pre class="brush: clojure">(defn get-one
   ([name]
     (mongo/with-mongo conn
-                      (mongo/fetch-one :pages
-                                       :where {:name name})))
+                      (first (mongo/fetch :pages
+                                       :where {:name name}
+                                       :sort  {:revision -1}
+                                       :limit 1))))
   ([name revision]
     (mongo/with-mongo conn
                       (mongo/fetch-one :pages
@@ -3061,14 +3063,16 @@ net.brehaut.ClojureTools = (function (SH) {
                     (mongo/fetch :pages)))</pre></td></tr><tr><td class="docs"><p>save a new page</p>
 </td><td class="codes"><pre class="brush: clojure">(defn save
   [page]
-  (let [{:keys [name body author]} page]
+  (let [{:keys [name body author revision]} page]
     (mongo/with-mongo conn
       (mongo/insert!
         :pages
         {:author author,
          :name name,
          :body body,
-         :revision 1}))))</pre></td></tr><tr><td class="docs"><p>update an existing page</p>
+         :revision (+ 1 (if (nil? revision)
+                          0
+                          (Integer/parseInt revision)))}))))</pre></td></tr><tr><td class="docs"><p>update an existing page</p>
 </td><td class="codes"><pre class="brush: clojure">(defn update
   [data]
   (if-let [name (:name data)]
@@ -3085,7 +3089,23 @@ net.brehaut.ClojureTools = (function (SH) {
   (let [mode (keyword (or (first m) :dev))
         port (Integer. (get (System/getenv) &quot;PORT&quot; &quot;8080&quot;))]
     (server/start port {:mode mode
-                        :ns 'eradi})))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#" name=""><h1 class="project-name"></h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#eradi.views.common" name="eradi.views.common"><h1 class="project-name">eradi.views.common</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Make stuff pretty.</p>
+                        :ns 'eradi})))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#eradi.tools" name="eradi.tools"><h1 class="project-name">eradi.tools</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>misc. tools for eradi</p>
+</td><td class="codes"></td></tr><tr><td class="docs">
+</td><td class="codes"><pre class="brush: clojure">(ns eradi.tools
+  (:import [com.petebevin.markdown MarkdownProcessor]))</pre></td></tr><tr><td class="docs"><p>The following functions handle preparation of doc text (both comment and docstring
+based) for display through html &amp; css.
+Nicked from <a href="https://github.com/fogus/marginalia">marginalia</a></p>
+</td><td class="codes"></td></tr><tr><td class="docs"><p>Markdown processor.</p>
+</td><td class="codes"><pre class="brush: clojure">(def mdp (com.petebevin.markdown.MarkdownProcessor.))</pre></td></tr><tr><td class="docs"><p>Markdown string to html converter. Translates strings like:</p>
+
+<p>   "# header!" -> <code>"&lt;h1&gt;header!&lt;/h1&gt;"</code></p>
+
+<p>   "## header!" -> <code>"&lt;h2&gt;header!&lt;/h2&gt;"</code></p>
+
+<p>   ...</p>
+</td><td class="codes"><pre class="brush: clojure">(defn md
+  [s]
+  (.markdown mdp s))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#eradi.views.common" name="eradi.views.common"><h1 class="project-name">eradi.views.common</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>Make stuff pretty.</p>
 </td><td class="codes"></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns eradi.views.common
   (:require [noir.validation :as vali]
@@ -3165,7 +3185,7 @@ net.brehaut.ClojureTools = (function (SH) {
   (vali/on-error :author error-item)
   (label &quot;author&quot; &quot;Author: &quot;)
   (text-field &quot;author&quot; author)
-  (hidden-field &quot;revision&quot; (int revision)))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#eradi.views.main" name="eradi.views.main"><h1 class="project-name">eradi.views.main</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>All views for eradi</p>
+  (hidden-field &quot;revision&quot; (if (nil? revision) 0 (int revision))))</pre></td></tr><tr><td class="spacer docs">&nbsp;</td><td class="codes" /></tr><tr><td class="docs"><div class="docs-header"><a class="anchor" href="#eradi.views.main" name="eradi.views.main"><h1 class="project-name">eradi.views.main</h1><a class="toc-link" href="#toc">toc</a></a></div></td><td class="codes" /></tr><tr><td class="docs"><p>All views for eradi</p>
 </td><td class="codes"></td></tr><tr><td class="docs">
 </td><td class="codes"><pre class="brush: clojure">(ns eradi.views.main
   (:require [eradi.views.common :as common]
@@ -3181,10 +3201,11 @@ net.brehaut.ClojureTools = (function (SH) {
     [:div.content &quot;a simple wiki&quot;]))</pre></td></tr><tr><td class="docs"><p>POST target of page adding</p>
 </td><td class="codes"><pre class="brush: clojure">(defpage [:post &quot;/add&quot;] {:as page}
   (if (common/valid? page)
-    (do
-      (pages/save page)
-      (render (str &quot;/page/&quot; (:name page)))
-    (render &quot;/add&quot; page))))</pre></td></tr><tr><td class="docs"><p>"add a page" form</p>
+    (let [pgname (:name page)]
+      (do
+        (pages/save page)
+        (resp/redirect (str &quot;/page/&quot; pgname))))
+    (render &quot;/add&quot; page)))</pre></td></tr><tr><td class="docs"><p>"add a page" form</p>
 </td><td class="codes"><pre class="brush: clojure">(defpage &quot;/add&quot; {:as page}
   (common/wikipage
     &quot;Add a page&quot;
@@ -3193,8 +3214,8 @@ net.brehaut.ClojureTools = (function (SH) {
               (common/page-fields page)
               (submit-button &quot;Add page&quot;))]))</pre></td></tr><tr><td class="docs"><p>POST target of page editing</p>
 </td><td class="codes"><pre class="brush: clojure">(defpage [:post &quot;/edit/:pgname&quot;] {:keys [pgname] :as post}
-  (if (pages/update post)
-    (resp/redirect (str &quot;/edit/&quot; pgname))
+  (if (pages/save post)
+    (resp/redirect (str &quot;/page/&quot; pgname))
     (render &quot;/edit/:pgname&quot; post)))</pre></td></tr><tr><td class="docs"><p>"edit page" form</p>
 </td><td class="codes"><pre class="brush: clojure">(defpage &quot;/edit/:pgname&quot; {:keys [pgname]}
   (if-let [post (pages/get-one pgname)]

@@ -27,12 +27,14 @@
 (defpartial editlink
   [page]
   [:div.span10.offset1.edit
-   "(last revision: "
-   (int (:revision page))
-   " by "
-   (link-to (str "/user/" (:author page)) (:author page))
-   ") "
-   (link-to (str "/edit/" (:name page)) "edit")])
+   [:span {:class "label label-info"}
+    "revision: "
+    (int (:revision page))]
+   [:span {:class "label"}
+    " by "
+    (link-to (str "/user/" (:author page)) (:author page))]
+   [:span {:class "label"}
+    (link-to (str "/edit/" (:name page)) "edit")]])
 
 ;; display a wiki page
 (defpartial wikipage
@@ -60,9 +62,10 @@
   [item base]
   [:li
    (link-to (str "/" base "/" (:name item)) (:name item))
-   " (revision: "
-   (int (:revision item))
-   ")"])
+   " "
+   [:span {:class "label label-info"}
+    "revision: "
+    (int (:revision item))]])
 
 ;; a list of items
 (defpartial wikilist

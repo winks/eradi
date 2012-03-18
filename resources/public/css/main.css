@@ -1,0 +1,39 @@
+.edit {
+    background-color: #ccc;
+    text-align: right;
+}
+.content {
+    background-color: #f6f6f6;
+    padding: 10px 10px 10px 10px;
+}
+.error {
+    background-color: #f6f6ff;
+    padding: 10px 10px 10px 10px;
+    color: #600;
+    font-weight: bold;
+}
+
+.s404 {
+    
+    
+}
+
+#footer {
+    background-color: #ccdfcc;
+    padding: 5px;
+    
+}
+
+h1 {
+    font-size: large;
+    padding: 5px;
+    background-color: #ccdfcc;
+}
+
+form label {
+    display: block;
+}
+
+form input[type="submit"] {
+    display: block;
+}

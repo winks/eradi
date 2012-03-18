@@ -63,7 +63,10 @@
 (defpartial wikiitem
   [item base]
   [:li
-   (link-to (str "/" base "/" (:name item)) (:name item))])
+   (link-to (str "/" base "/" (:name item)) (:name item))
+   " (revision: "
+   (int (:revision item))
+   ")"])
 
 ;; a list of items
 (defpartial wikilist

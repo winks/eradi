@@ -28,7 +28,9 @@
 (defn get-all
   []
   (mongo/with-mongo conn
-                    (mongo/fetch :pages)))
+                    (mongo/fetch :pages
+                                 :sort {:name 1,
+                                        :revision -1})))
 
 ;; save a new page
 (defn save

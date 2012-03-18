@@ -1,4 +1,4 @@
-:; misc. tools for eradi
+;; misc. tools for eradi
 
 (ns eradi.tools
   (:import [com.petebevin.markdown MarkdownProcessor]))

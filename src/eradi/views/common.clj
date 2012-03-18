@@ -98,4 +98,4 @@
   (vali/on-error :author error-item)
   (label "author" "Author: ")
   (text-field "author" author)
-  (hidden-field "revision" (int revision)))
+  (hidden-field "revision" (if (nil? revision) 0 (int revision))))

@@ -18,10 +18,11 @@
 ;; POST target of page adding
 (defpage [:post "/add"] {:as page}
   (if (common/valid? page)
-    (do
-      (pages/save page)
-      (render (str "/page/" (:name page)))
-    (render "/add" page))))
+    (let [pgname (:name page)]
+      (do
+        (pages/save page)
+        (resp/redirect (str "/page/" pgname))))
+    (render "/add" page)))
 
 ;; "add a page" form
 (defpage "/add" {:as page}
@@ -34,8 +35,8 @@
 
 ;; POST target of page editing
 (defpage [:post "/edit/:pgname"] {:keys [pgname] :as post}
-  (if (pages/update post)
-    (resp/redirect (str "/edit/" pgname))
+  (if (pages/save post)
+    (resp/redirect (str "/page/" pgname))
     (render "/edit/:pgname" post)))
 
 ;; "edit page" form

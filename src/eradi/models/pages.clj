@@ -14,8 +14,10 @@
 (defn get-one
   ([name]
     (mongo/with-mongo conn
-                      (mongo/fetch-one :pages
-                                       :where {:name name})))
+                      (first (mongo/fetch :pages
+                                       :where {:name name}
+                                       :sort  {:revision -1}
+                                       :limit 1))))
   ([name revision]
     (mongo/with-mongo conn
                       (mongo/fetch-one :pages
@@ -31,14 +33,16 @@
 ;; save a new page
 (defn save
   [page]
-  (let [{:keys [name body author]} page]
+  (let [{:keys [name body author revision]} page]
     (mongo/with-mongo conn
       (mongo/insert!
         :pages
         {:author author,
          :name name,
          :body body,
-         :revision 1}))))
+         :revision (+ 1 (if (nil? revision)
+                          0
+                          (Integer/parseInt revision)))}))))
 
 ;; update an existing page
 (defn update

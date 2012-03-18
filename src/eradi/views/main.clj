@@ -41,3 +41,9 @@
 (defpage "/test" []
   (common/layout
     [:p (:author (empages/gettestpage))]))
+
+(defpage "/pages" []
+  (common/wikipage
+    "All pages"
+    (common/wikilist
+      (empages/getpages))))

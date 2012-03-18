@@ -18,6 +18,8 @@
                   "["
                   (link-to "/" "home")
                   " | "
+                  (link-to "/pages" "all pages")
+                  " | "
                   (link-to (str "/add") "add page")
                   "]"]]]))
 
@@ -49,6 +51,17 @@
   [:div.error
    [:span "Page not found!"]])
 
+(defpartial wikiitem
+  [item base]
+  [:li
+   (link-to (str "/" base "/" (:name item)) (:name item))])
+
+(defpartial wikilist
+  [items]
+  [:ul.wikilist
+   (let [num (count items)
+         base (take num (cycle ["page"]))]
+     (map wikiitem items base))])
 
 (defn valid? [{:keys [name body author]}]
   (vali/rule (vali/min-length? name 1)

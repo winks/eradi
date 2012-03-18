@@ -23,3 +23,8 @@
   (mongo/with-mongo conn
                     (mongo/fetch-one :pages
                                      :where {:name name})))
+
+(defn getpages
+  []
+  (mongo/with-mongo conn
+                    (mongo/fetch :pages)))

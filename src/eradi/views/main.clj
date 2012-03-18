@@ -1,8 +1,6 @@
 (ns eradi.views.main
   (:require [eradi.views.common :as common]
-            [eradi.models.pages :as empages]
-            [noir.content.pages :as pages]
-            [noir.response :as resp])
+            [eradi.models.pages :as empages])
   (:use noir.core
         hiccup.core
         hiccup.page-helpers

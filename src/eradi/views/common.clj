@@ -1,5 +1,6 @@
 (ns eradi.views.common
-  (:require [noir.validation :as vali])
+  (:require [noir.validation :as vali]
+            [eradi.tools :as tools])
   (:use noir.core
         hiccup.core
         hiccup.page-helpers
@@ -43,7 +44,7 @@
 (defpartial wikicontent
   [page]
   [:div.content
-   (:body page)]
+   (tools/md (:body page))]
    (editlink page))
 
 (defpartial s404content

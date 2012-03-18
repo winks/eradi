@@ -6,7 +6,7 @@
         hiccup.page-helpers
         hiccup.form-helpers))
 
-(defpage "/welcome" []
+(defpage "/" []
   (common/wikipage
     "Welcome to eradi"
     [:div.content "a simple wiki"]))

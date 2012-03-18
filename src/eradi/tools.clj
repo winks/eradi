@@ -1,3 +1,5 @@
+:; misc. tools for eradi
+
 (ns eradi.tools
   (:import [com.petebevin.markdown MarkdownProcessor]))
 

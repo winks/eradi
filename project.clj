@@ -6,4 +6,3 @@
                            [org.markdownj/markdownj "0.3.0-1.0.2b4"]]
             :dev-dependencies [[lein-marginalia "0.7.0"]]
             :main eradi.server)
-

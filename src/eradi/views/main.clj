@@ -1,6 +1,7 @@
 (ns eradi.views.main
   (:require [eradi.views.common :as common]
-            [eradi.models.pages :as empages])
+            [eradi.models.pages :as empages]
+            [noir.response :as resp])
   (:use noir.core
         hiccup.core
         hiccup.page-helpers
@@ -15,8 +16,8 @@
   (if (common/valid? page)
     (do
       (empages/save page)
-      (render (str "/page/") (:name page)))
-    (render "/add" page)))
+      (render (str "/page/" (:name page)))
+    (render "/add" page))))
 
 (defpage "/add" {:as page}
   (common/wikipage
@@ -25,6 +26,20 @@
      (form-to [:post "/add"]
               (common/page-fields page)
               (submit-button "Add page"))]))
+
+(defpage [:post "/edit/:pgname"] {:keys [pgname] :as post}
+  (if (empages/updatepage post)
+    (resp/redirect (str "/edit/" pgname))
+    (render "/edit/:pgname" post)))
+
+(defpage "/edit/:pgname" {:keys [pgname]}
+  (if-let [post (empages/getpage pgname)]
+    (common/wikipage
+      (html "Edit page: " (link-to (str "/page/" pgname) pgname))
+      [:div.content
+       (form-to [:post (str "/edit/" pgname)]
+                (common/page-fields post)
+                (submit-button "Edit page"))])))
 
 (defpage "/page/:pgname" {:keys [pgname]}
   (let [page (empages/getpage pgname)]

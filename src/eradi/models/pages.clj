@@ -13,6 +13,16 @@
          :body body,
          :revision 1}))))
 
+(defn updatepage
+  [data]
+  (if-let [name (:name data)]
+    (if-let [post (getpage name)]
+      (mongo/with-mongo
+        conn (mongo/update! :pages
+                            post
+                            (merge post { :body (:body data)}))))))
+
+
 (defn gettestpage
   []
   (mongo/with-mongo conn

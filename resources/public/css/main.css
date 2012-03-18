@@ -24,10 +24,24 @@
     
 }
 
+body {
+    font-family: "trebuchet ms";
+}
+
 h1 {
-    font-size: large;
+    font-size: 16px;
+    font-weight: bold;
     padding: 5px;
     background-color: #ccdfcc;
+}
+
+h2 {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+li {
+    list-style: circle;
 }
 
 form label {

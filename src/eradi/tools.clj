@@ -31,4 +31,4 @@
     x
     (if (nil? x)
       0
-      (int x))))
+      (Integer/parseInt x))))

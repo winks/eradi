@@ -43,7 +43,7 @@
         {:author author,
          :name name,
          :body body,
-         :revision (+ 1 (tools/fnord-int revision))}))))
+         :revision (inc (tools/fnord-int revision))}))))
 
 ;; update an existing page
 (defn update
